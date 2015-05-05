@@ -80,15 +80,11 @@ func (this *MainController) Index() {
 	this.TplNames = "AppIndex.tpl"
 }
 
-func (this *MainController) ClearPosition() {
-	cmd := newCommand(0, "")
-	defer func() {
-		this.Data["json"] = cmd
-		this.ServeJson()
-	}()
-	ID := this.GetString("ID")
-	if len(ID) <= 0 {
-		tekLib.DebugSys(fmt.Sprintf("无法获取参数 货位编号") + tekLib.GetFileLocation())
-	}
+func (this *MainController) OrderListIndex() {
+	this.TplNames = "OrderListIndex.tpl"
+}
 
+func (this *MainController) OrderInfoList() {
+	this.Data["json"] = tekLib.NewOrderInfoList(tekLib.G_orders)
+	this.ServeJson()
 }

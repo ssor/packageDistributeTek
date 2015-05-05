@@ -46,7 +46,7 @@
           <div class="row" id = "subNavBar" style="">
             <div class="col-xs-5 col-sm-5 col-md-5 col-md-lg-5" style="text-align: left;cursor:pointer;" onclick="window.location.href='/'">
                 <img src="/images/logo_pure.png" class="img-responsive" alt="Responsive image" style="width: 35px; margin-top: 6px;float: left;margin-right: 10px;">
-                <div style="color: rgba(256,256,256,1); padding-top: 10px; font-size: 18px; margin-left: -50px;">订单拣选系统</div>
+                <div style="color: rgba(256,256,256,1); padding-top: 10px; font-size: 18px; margin-left: -50px;">配送站拣选系统</div>
             </div>
             <div class="col-xs-3 col-sm-3 col-md-3 col-md-lg-3" style="text-align: left;">
             </div>
@@ -56,7 +56,7 @@
  
 
               <div class="col-xs-3 col-sm-3 col-md-3 col-md-lg-3"  style="text-align: right;">
-                  <a class="btn btn-link" href="/NotConfirmedOrderItemsIndex" role="button" style=" color: rgba(256,256,256,0.6); padding-top: 10px; font-size: 16px;">未处理的订单项</a>  
+                  <!-- <a class="btn btn-link" href="/NotConfirmedOrderItemsIndex" role="button" style=" color: rgba(256,256,256,0.6); padding-top: 10px; font-size: 16px;">未处理的订单项</a>   -->
               </div>                             
 
           </div>
@@ -83,10 +83,6 @@
                             <th></th>
                             <th>订单编码</th>
                             <th>是否完成</th>
-                            <th>是否拣选中</th>
-                            <!-- <th>货位编号</th> -->
-                            <!-- <th>完成量</th> -->
-                            <!-- <th>需求量</th> -->
                             <th>完成度</th>
                         </tr>
                     </thead>
@@ -116,20 +112,10 @@
                           "targets": 2
                       }, 
                       {
-                          "render": function ( data, type, row ) {//完成与否
-                              if(row.PositionID == 0){
-                                return "否"
-                              }else{
-                                return "是（货位："+ row.PositionID +"）"
-                              }
-                          },
-                          "targets": 3
-                      },                     
-                      {
                           "render": function ( data, type, row ) {//完成度 形式如：1/5
                               return row.CurrentItemCount + " / " + row.TotalItemCount;
                           },
-                          "targets": 4
+                          "targets": 3
                       },
 
                       ],
@@ -159,21 +145,6 @@
                   // "data": "Located",
                   "width": "20%"
               }, 
-              {
-                  "width": "20%"
-              }, 
-
-              // {
-              //     "data": "PositionID",
-              //     "width": "20%"
-              // }, 
-              // {
-              //     "data": "CurrentItemCount",
-              //     "width": "10%"
-              // }, {
-              //     "data": "TotalItemCount",
-              //     "width": "10%"
-              // }, 
               ]
           });
 

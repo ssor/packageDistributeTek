@@ -15,4 +15,7 @@ func init() {
 	beego.Router("/UpdateNow", &controllers.MainController{}, "get:UpdateNow") //
 	beego.Router("/", &controllers.MainController{}, "get:Index")
 
+	beego.Router("/OrderListIndex", &controllers.MainController{}, "get:OrderListIndex")
+	beego.Router("/OrderInfoList", &controllers.MainController{}, "get:OrderInfoList")
+
 }

@@ -15,6 +15,29 @@ import (
 )
 
 // type ProductName string
+type OrderInfo struct {
+	ID                               string
+	CurrentItemCount, TotalItemCount int
+}
+
+func NewOrderInfo(order *Order) *OrderInfo {
+	current, total := order.GetItemCount()
+	return &OrderInfo{
+		ID:               order.ID,
+		CurrentItemCount: current,
+		TotalItemCount:   total,
+	}
+}
+
+type OrderInfoList []*OrderInfo
+
+func NewOrderInfoList(orderList OrderList) OrderInfoList {
+	list := OrderInfoList{}
+	for _, order := range orderList {
+		list = append(list, NewOrderInfo(order))
+	}
+	return list
+}
 
 //订单结构
 type Order struct {
@@ -30,6 +53,14 @@ func (this *Order) Need(productName string) bool {
 		}
 	}
 	return false
+}
+func (this *Order) GetItemCount() (int, int) {
+	current, total := 0, 0
+	for _, item := range this.Items {
+		current += item.CountCurrent
+		total += item.CountNeed
+	}
+	return current, total
 }
 
 type OrderList []*Order
