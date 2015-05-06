@@ -88,3 +88,27 @@ func (this *MainController) OrderInfoList() {
 	this.Data["json"] = tekLib.NewOrderInfoList(tekLib.G_orders)
 	this.ServeJson()
 }
+
+func (this *MainController) ProductManagementIndex() {
+	this.TplNames = "ProductManagementIndex.tpl"
+}
+func (this *MainController) ProductList() {
+	this.Data["json"] = tekLib.G_Products
+	this.ServeJson()
+}
+func (this *MainController) AddProductIndex() {
+	this.TplNames = "AddProductIndex.tpl"
+}
+func (this *MainController) OrderToExpressmanManagementIndex() {
+	this.TplNames = "OrderToExpressmanManagementIndex.tpl"
+}
+func (this *MainController) OrderToExpressmanList() {
+	this.Data["json"] = tekLib.G_OrderAndExpressmanMaps
+	this.ServeJson()
+}
+func (this *MainController) AddDistributeInfoIndex() {
+	this.TplNames = "AddDistributeInfoIndex.tpl"
+}
+func (this *MainController) PickUpIndex() {
+	this.TplNames = "PickUpIndex.tpl"
+}

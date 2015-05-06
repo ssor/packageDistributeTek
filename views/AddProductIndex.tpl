@@ -41,7 +41,7 @@
           <div class="row" id = "subNavBar" style="">
             <div class="col-xs-5 col-sm-5 col-md-5 col-md-lg-5" style="text-align: left;cursor:pointer;"  onclick="window.location.href='/'">
                 <img src="/images/logo_pure.png" class="img-responsive" alt="Responsive image" style="width: 35px; margin-top: 6px;float: left;margin-right: 10px;">
-                <div style="color: rgba(256,256,256,1); padding-top: 10px; font-size: 18px; margin-left: -50px;">订单拣选系统</div>
+                <div style="color: rgba(256,256,256,1); padding-top: 10px; font-size: 18px; margin-left: -50px;">配送站拣选系统</div>
             </div>
             <div class="col-xs-3 col-sm-3 col-md-3 col-md-lg-3" style="text-align: left;">
             </div>
@@ -78,10 +78,10 @@
 
         </form>
 
-        <div style="border-bottom: solid 1px rgba(0,0,0,0.1); margin-bottom: 30px; margin-top: 30px;"></div>
+         <div style="border-bottom: solid 1px rgba(0,0,0,0.1); margin-bottom: 30px; margin-top: 30px;"></div>
 
 
-        <form >
+<!--        <form >
           <label for="exampleInputFile" style="font-size: 20px;margin-bottom: 15px;">单个添加</label>
           <div class="form-group">
             <label for="exampleInputEmail1">产品编号</label>
@@ -95,7 +95,6 @@
                 <button type="button" class="btn btn-success btn-small" onclick="submitOrder()">&nbsp;&nbsp;提 &nbsp; 交&nbsp;&nbsp;</button>
         </form>
         <div class="col-xs-12 col-sm-12 col-md-12 col-md-lg-12">
-          <!-- <div style="border-bottom: solid 1px rgba(0,0,0,0.2); margin-bottom: 30px;"></div> -->
           <div style="border-bottom: solid 1px rgba(0,0,0,0.1); margin-top: 10px;margin-bottom: 10px;"></div>
           <table id="dtProcess" class="display" cellspacing="0" width="100%" >
               <thead>
@@ -107,7 +106,7 @@
                   </tr>
               </thead>
           </table>
-        </div>
+        </div> -->
 
       </div>
 
@@ -154,6 +153,8 @@
       return str.replace(/\+/g, '%2B')
     }
       $(document).ready(function() {
+
+          return
           table = $('#dtProcess').DataTable( {
               "columnDefs": [ {
                           "searchable": false,

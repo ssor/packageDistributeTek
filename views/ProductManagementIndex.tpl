@@ -49,7 +49,7 @@
           <div class="row" id = "subNavBar" style="">
             <div class="col-xs-5 col-sm-5 col-md-5 col-md-lg-5" style="text-align: left;cursor:pointer;"  onclick="window.location.href='/'">
                 <img src="/images/logo_pure.png" class="img-responsive" alt="Responsive image" style="width: 35px; margin-top: 6px;float: left;margin-right: 10px;">
-                <div style="color: rgba(256,256,256,1); padding-top: 10px; font-size: 18px; margin-left: -50px;">订单拣选系统</div>
+                <div style="color: rgba(256,256,256,1); padding-top: 10px; font-size: 18px; margin-left: -50px;">配送站拣选系统</div>
             </div>
             <div class="col-xs-3 col-sm-3 col-md-3 col-md-lg-3" style="text-align: left;">
             </div>
@@ -62,7 +62,7 @@
   
 
               <div class="col-xs-2 col-sm-2 col-md-2 col-md-lg-2" style="text-align: right;">
-                  <a class="btn btn-link" href="/ProductNameManagementIndex"  target="_blank"  role="button" style="color: rgba(256,256,256,0.7); padding-top: 10px; font-size: 16px;">产品名称管理</a>  
+                  <!-- <a class="btn btn-link" href="/ProductNameManagementIndex"  target="_blank"  role="button" style="color: rgba(256,256,256,0.7); padding-top: 10px; font-size: 16px;">产品名称管理</a>   -->
               </div>                             
 
           </div>

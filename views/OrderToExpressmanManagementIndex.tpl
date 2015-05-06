@@ -2,7 +2,7 @@
 <html>
   <head>
     <meta charset="utf-8">
-    <title>集合单管理</title>
+    <title>订单分配管理</title>
     <meta name="viewport" content="width=device-width,initial-scale=1">
     <link rel="icon" 
           type="image/png" 
@@ -49,7 +49,7 @@
           <div class="row" id = "subNavBar" style="">
             <div class="col-xs-5 col-sm-5 col-md-5 col-md-lg-5" style="text-align: left;cursor:pointer;" onclick="window.location.href='/'">
                 <img src="/images/logo_pure.png" class="img-responsive" alt="Responsive image" style="width: 35px; margin-top: 6px;float: left;margin-right: 10px;">
-                <div style="color: rgba(256,256,256,1); padding-top: 10px; font-size: 18px; margin-left: -50px;">订单拣选系统</div>
+                <div style="color: rgba(256,256,256,1); padding-top: 10px; font-size: 18px; margin-left: -50px;">配送站拣选系统</div>
             </div>
             <div class="col-xs-3 col-sm-3 col-md-3 col-md-lg-3" style="text-align: left;">
             </div>
@@ -74,29 +74,28 @@
     <div role="main" class="main">
 
       <div class="container" style="margin-top:80px;">
-          <div class="title" style="">集合单管理</div>
-          <p class="intro">查看、创建或者删除集合单，开始集合单的拣选</p>
+          <div class="title" style="">订单分配管理</div>
+          <p class="intro">查看订单与配送员的绑定信息</p>
           <div class="row" >
               <div class="col-xs-12 col-sm-12 col-md-12 col-md-lg-12">
                   <div style="border-bottom: solid 1px rgba(0,0,0,0.2); margin-bottom: 30px;"></div>
               </div>
               <div class="col-xs-6 col-sm-6 col-md-6 col-md-lg-6">
                 <button type="button" class="btn btn-default btn-small" onclick="reload()">&nbsp;&nbsp;刷 &nbsp; 新 &nbsp;&nbsp;</button>
-                <button type="button" class="btn btn-success btn-small" style="margin-left:10px;" onclick="openAddNewMergeOrderIndex()">新集合单 </button>
-                <button type="button" class="btn btn-success btn-small" style="margin-left:10px;"  onclick="openPickupMergeOrderIndex()">开始拣选 </button>
+                <button type="button" class="btn btn-success btn-small" style="margin-left:10px;" onclick="openAddDistributeInfoIndex()">&nbsp;&nbsp;添&nbsp;加&nbsp;&nbsp; </button>
+                <!-- <button type="button" class="btn btn-success btn-small" style="margin-left:10px;"  onclick="openPickupMergeOrderIndex()">开始拣选 </button> -->
                 <!-- <button type="button" class="btn btn-success btn-small" onclick="openUpdateNewMergeOrderIndex()">更新集合单</button> -->
-                <button type="button" class="btn btn-danger btn-small" style="margin-left:10px;" onclick="deleteRow()">&nbsp;&nbsp;删 &nbsp; 除&nbsp;&nbsp;</button>
+                <!-- <button type="button" class="btn btn-danger btn-small" style="margin-left:10px;" onclick="deleteRow()">&nbsp;&nbsp;删 &nbsp; 除&nbsp;&nbsp;</button> -->
               </div>
 
               <div class="col-xs-6 col-sm-6 col-md-6 col-md-lg-6" style="text-align: right;">
-                <div class="form-inline">
+<!--                 <div class="form-inline">
                   <div class="form-group">
                     <label for="exampleInputName2" style="color: rgba(11,11,11,1);">查找集合单：</label>
                     <input type="text" class="form-control" id="inputOrderID" placeholder="输入订单编号">
                   </div>
-                  <!-- <button type="button" class="btn btn-default" onclick="clickToStartToSearchMergedOrder()">确&nbsp;&nbsp;定</button> -->
                 </div>
-              </div>
+ -->              </div>
 
               <div class="col-xs-12 col-sm-12 col-md-12 col-md-lg-12">
                 <div style="border-bottom: solid 1px rgba(0,0,0,0.1); margin-top: 10px;margin-bottom: 10px;"></div>
@@ -106,9 +105,9 @@
                     <thead>
                         <tr>
                             <th></th>
-                            <th>集合单编码</th>
-                            <th>拣选商品数量</th>
-                            <th>完成状态</th>
+                            <th>订单编码</th>
+                            <th>配送员</th>
+                            <!-- <th>完成状态</th> -->
                         </tr>
                     </thead>
                 </table>
@@ -136,38 +135,27 @@
                       "searchable": false,
                       "orderable": false,
                       "targets": 0
-                  }, {
-                      "render": function(data, type, row) { //完成与否
-                          if (row.Over == true) {
-                              return "已完成"
-                          } else {
-                              return "未完成"
-                          }
-                      },
-                      "targets": 3
-                  },
+                  }, 
 
               ],
-              "dom": 'lrtip',
+              // "dom": 'lrtip',
               "paging": false,
               "ordering": true,
               "info": false,
               "searching": true,
               "ajax": {
-                  "url": "/MergedOrders",
+                  "url": "/OrderToExpressmanList",
                   "dataSrc": ""
               },
               "columns": [{
-                  "data": "ID",
+                  "data": "OrderID",
                   "width": "10%"
               }, {
-                  "data": "ID",
+                  "data": "OrderID",
                   "width": "40%"
               }, {
-                  "data": "TotalItemCount",
-                  "width": "20%"
-              }, {
-                  "width": "30%"
+                  "data": "ExpressmanID",
+                  "width": "40%"
               }, ]
           });
           table.on('order.dt search.dt', function() {
@@ -192,11 +180,11 @@
               //可以选中多行
               // $(this).toggleClass('selected');
           });
-          window.onfocus = function(){
-            prepareBarcodeInput()
-          }
-          prepareBarcodeInput()
-          setInterval(submitOrder, 200)
+          // window.onfocus = function(){
+          //   prepareBarcodeInput()
+          // }
+          // prepareBarcodeInput()
+          // setInterval(submitOrder, 200)
 
       });
        function reload() {
@@ -312,8 +300,8 @@
            }
        }
 
-        function openAddNewMergeOrderIndex(){
-          window.open("/MergeOrderIndex")
+        function openAddDistributeInfoIndex(){
+          window.open("/AddDistributeInfoIndex")
         }
         function openUpdateNewMergeOrderIndex() {
             var data = table.rows(".selected").data()

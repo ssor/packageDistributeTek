@@ -161,7 +161,7 @@
                 <a class="btn btn-link" href="/OrderListIndex" target="_blank"  role="button" style="width: 100%;color: rgba(256,256,256,0.6); padding-top: 10px; font-size: 16px;margin-left: -80px;">订单管理</a>   
             </div>    
             <div class="col-xs-1 col-sm-1 col-md-1 col-md-lg-1">
-                <a class="btn btn-link" href="/MergeOrderManagementIndex"  target="_blank" role="button" style="width: 100%;color: rgba(256,256,256,0.6); padding-top: 10px; font-size: 16px;margin-left: -80px;">订单分配信息</a>   
+                <a class="btn btn-link" href="/OrderToExpressmanManagementIndex"  target="_blank" role="button" style="width: 100%;color: rgba(256,256,256,0.6); padding-top: 10px; font-size: 16px;margin-left: -80px;">订单分配信息</a>   
             </div>    
 
             <div class="col-xs-1 col-sm-1 col-md-1 col-md-lg-1">

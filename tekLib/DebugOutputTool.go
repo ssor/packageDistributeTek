@@ -3,6 +3,7 @@ package tekLib
 import (
 	"fmt"
 	"github.com/astaxie/beego"
+	"github.com/fatih/color"
 	"runtime"
 	"strings"
 )
@@ -42,6 +43,7 @@ func init() {
 var DebugLevel int = 4
 
 var userBeego = false
+var useColor = true
 
 var G_printLog = true
 
@@ -67,6 +69,8 @@ func DebugOutput(log string, level int) {
 	if level <= DebugLevel {
 		if userBeego == true {
 			DebugOutputBeego(log, level)
+		} else if useColor == true {
+			DebugOutputColor(log, level)
 		} else {
 
 			prefix := ""
@@ -85,7 +89,18 @@ func DebugOutput(log string, level int) {
 		}
 	}
 }
-
+func DebugOutputColor(log string, level int) {
+	switch level {
+	case 1:
+		color.Red(log)
+	case 2:
+		color.Yellow(log)
+	case 3:
+		color.Green(log)
+	case 4:
+		color.Blue(log)
+	}
+}
 func DebugOutputBeego(log string, level int) {
 	switch level {
 	case 1:
