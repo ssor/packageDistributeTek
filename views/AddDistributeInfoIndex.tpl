@@ -69,7 +69,7 @@
         <form style="">
           <div class="form-group">
               <label for="exampleInputFile" style="font-size: 20px;margin-bottom: 15px;">通过文件导入</label>
-              <input type="file" id="fileName1" name="fileName1">
+              <input type="file" id="fileName3" name="fileName3">
               <p class="help-block">上传文件之前确定文件的格式正确</p>
           </div>
           <button type="button" class="btn btn-success btn-small" onclick="submitOrderFromDistributeFile()">&nbsp;&nbsp;导 &nbsp; 入&nbsp;&nbsp;</button>
@@ -84,20 +84,21 @@
       
     <script>
     function downloadFile(templateType){
-      switch(templateType){
-        case 1:
-          window.open("/files/配送单模板.xlsx")
-        break
-        case 2:
-          window.open("/files/订单模板.xlsx")
-        break
-      }
+      window.open("/files/订单分配到人列表模板.xlsx")
+      // switch(templateType){
+      //   case 1:
+      //     window.open("/files/订单分配到人列表模板.xlsx")
+      //   break
+      //   case 2:
+      //     window.open("/files/订单模板.xlsx")
+      //   break
+      // }
     }
     function submitOrderFromDistributeFile(){
       $.ajaxFileUpload({
-          url: '/UploadOrderInfo?type=1',
+          url: '/UploadInfoFromFile?type=3',
           secureuri: false,
-          fileElementId: 'fileName1',
+          fileElementId: 'fileName3',
           dataType: 'xlsx',
           success: function(data, status) {
               data = data.substring(data.indexOf("{"),data.indexOf("}")+1)
@@ -118,7 +119,7 @@
     }
     function submitOrderFromOrderFile() {
         $.ajaxFileUpload({
-            url: '/UploadOrderInfo?type=2',
+            url: '/UploadInfoFromFile?type=2',
             secureuri: false,
             fileElementId: 'fileName2',
             dataType: 'xlsx',

@@ -178,7 +178,8 @@ func (this *MainController) ClearCompletedOrders() {
 		return
 	}
 }
-func (this *MainController) UploadOrderInfo() {
+
+func (this *MainController) UploadInfoFromFile() {
 	fileName := "" //上传的文件名，放置到暂存区
 	cmd := newCommand(0, "")
 	defer func() {
@@ -215,7 +216,7 @@ func (this *MainController) UploadOrderInfo() {
 			cmd = newCommand(1, "上传文件出错")
 			return
 		} else {
-			if err := tekLib.UploadOrderInfoFromFile(fileName, fileType); err != nil {
+			if err := tekLib.UploadFromFile(fileName, fileType); err != nil {
 				tekLib.DebugSys(err.Error() + tekLib.GetFileLocation())
 				cmd = newCommand(1, err.Error())
 				return

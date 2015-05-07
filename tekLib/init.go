@@ -66,9 +66,52 @@ func ClearCompletedOrders() error {
 	G_orders = list
 	return nil
 }
+func UploadOrderToExpressmanInfo(sheet *xlsx.Sheet) error {
+	rows := sheet.Rows
 
-//从文件中导入订单信息和部分商品编码信息
-func UploadOrderInfoFromFile(excelFileName string, fileType string) error {
+	//****************************************************************************************
+	// 数据从行4开始，包含内容的列 1 订单流水号 4 配送员
+	//****************************************************************************************
+	testColName := func(colName []string, colIndex []int, row *xlsx.Row) error {
+		length := len(colName)
+		for i := 0; i < length; i++ {
+			cellValue := strings.Trim(row.Cells[colIndex[i]].Value, " ")
+			if cellValue != colName[i] {
+				return errors.New(fmt.Sprintf("文件格式错误, 第 %d 列应该是 %s，现在是 %s", colIndex[i]+1, colName[i], cellValue))
+			}
+		}
+		return nil
+	}
+	if err := testColName([]string{"订单流水号", "配送员"},
+		[]int{0, 3},
+		rows[0]); err != nil {
+		return err
+	}
+	DebugInfo("导入订单分配到配送员信息:" + GetFileLocation())
+	DebugTrace(G_DebugLine)
+	// ordersTemp := OrderList{}
+	count := 0
+	rows = rows[1:]
+	for i, row := range rows {
+
+		_orderID := strings.Trim(row.Cells[0].Value, " ") //流水号
+		_expressman := strings.Trim(row.Cells[3].Value, " ")
+
+		DebugTrace(fmt.Sprintf("%d: %s -> %s", i+1, _orderID, _expressman) + GetFileLocation())
+		_orderID = G_OrderPrefix + _orderID //易果系统会自动添加 前缀 作为识别码
+		if len(_expressman) <= 0 {
+			DebugSys(fmt.Sprintf("订单 %s 没有指定配送员", _orderID) + GetFileLocation())
+			continue
+		}
+		G_OrderAndExpressmanMaps = G_OrderAndExpressmanMaps.Add(NewOrderToExpressman(_orderID, _expressman))
+		count += 1
+	}
+	DebugTrace(G_DebugLine)
+
+	DebugInfo(fmt.Sprintf("共导入了 %d 个分配信息", count))
+	return nil
+}
+func UploadFromFile(excelFileName string, fileType string) error {
 	excelFileName = "temp/" + excelFileName
 	var err error
 	var xlFile *xlsx.File
@@ -77,20 +120,48 @@ func UploadOrderInfoFromFile(excelFileName string, fileType string) error {
 		return err
 	}
 	//检查格式
-	fmt.Println(fmt.Sprintf("文件中共有 %d 个 sheet", len(xlFile.Sheets)))
+	// fmt.Println(fmt.Sprintf("文件中共有 %d 个 sheet", len(xlFile.Sheets)))
 
 	if len(xlFile.Sheets) <= 0 {
 		return errors.New("文件中没有数据")
 	}
-	var ordersTemp OrderList
+	// var ordersTemp OrderList
 	firstSheet := xlFile.Sheets[0]
+	switch fileType {
+	case "1", "2":
+		return UploadOrderInfoFromFile(firstSheet, fileType)
+	case "3":
+		return UploadOrderToExpressmanInfo(firstSheet)
+	}
+	return nil
+}
+
+//从文件中导入订单信息和部分商品编码信息
+func UploadOrderInfoFromFile(sheet *xlsx.Sheet, fileType string) error {
+	// func UploadOrderInfoFromFile(excelFileName string, fileType string) error {
+	// excelFileName = "temp/" + excelFileName
+	var err error
+	// var xlFile *xlsx.File
+	// if xlFile, err = xlsx.OpenFile(excelFileName); err != nil {
+	// 	DebugMust(err.Error())
+	// 	return err
+	// }
+	// //检查格式
+	// // fmt.Println(fmt.Sprintf("文件中共有 %d 个 sheet", len(xlFile.Sheets)))
+
+	// if len(xlFile.Sheets) <= 0 {
+	// 	return errors.New("文件中没有数据")
+	// }
+	var ordersTemp OrderList
+	// firstSheet := xlFile.Sheets[0]
+
 	switch fileType {
 	case "1": //从配送单中提取订单信息
 		DebugInfo("从配送单中提取订单信息" + GetFileLocation())
-		ordersTemp, err = extractOrderInfoFromDistributionDetail(firstSheet)
+		ordersTemp, err = extractOrderInfoFromDistributionDetail(sheet)
 	case "2": //从订单详细情况文件中提取订单信息
 		DebugInfo("从订单中提取订单信息" + GetFileLocation())
-		ordersTemp, err = extractOrderInfoFromOrderDetail(firstSheet)
+		ordersTemp, err = extractOrderInfoFromOrderDetail(sheet)
 	}
 	if err == nil {
 		addedCount := len(G_orders)

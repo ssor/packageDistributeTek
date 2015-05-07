@@ -25,7 +25,7 @@ func init() {
 	beego.Router("/OrderInfoList", &controllers.MainController{}, "get:OrderInfoList")
 	beego.Router("/AddOrderIndex", &controllers.MainController{}, "get:AddOrderIndex")
 	beego.Router("/RemoveOrder", &controllers.MainController{}, "get:RemoveOrder")
-	beego.Router("/UploadOrderInfo", &controllers.MainController{}, "post:UploadOrderInfo")
+	beego.Router("/UploadInfoFromFile", &controllers.MainController{}, "post:UploadInfoFromFile")
 	beego.Router("/OrderDetailIndex", &controllers.MainController{}, "get:OrderDetailIndex")
 	beego.Router("/OrderDetail", &controllers.MainController{}, "get:OrderDetail")
 	beego.Router("/ClearCompletedOrders", &controllers.MainController{}, "get:ClearCompletedOrders")

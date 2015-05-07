@@ -39,7 +39,7 @@
           <div class="row" id = "subNavBar" style="">
             <div class="col-xs-5 col-sm-5 col-md-5 col-md-lg-5" style="text-align: left;cursor:pointer;"  onclick="window.location.href='/'">
                 <img src="/images/logo_pure.png" class="img-responsive" alt="Responsive image" style="width: 35px; margin-top: 6px;float: left;margin-right: 10px;">
-                <div style="color: rgba(256,256,256,1); padding-top: 10px; font-size: 18px; margin-left: -50px;">订单拣选系统</div>
+                <div style="color: rgba(256,256,256,1); padding-top: 10px; font-size: 18px; margin-left: -50px;">配送站拣选系统</div>
             </div>
             <div class="col-xs-3 col-sm-3 col-md-3 col-md-lg-3" style="text-align: left;">
             </div>
@@ -123,7 +123,7 @@
     }
     function submitOrderFromDistributeFile(){
       $.ajaxFileUpload({
-          url: '/UploadOrderInfo?type=1',
+          url: '/UploadInfoFromFile?type=1',
           secureuri: false,
           fileElementId: 'fileName1',
           dataType: 'xlsx',
@@ -146,7 +146,7 @@
     }
     function submitOrderFromOrderFile() {
         $.ajaxFileUpload({
-            url: '/UploadOrderInfo?type=2',
+            url: '/UploadInfoFromFile?type=2',
             secureuri: false,
             fileElementId: 'fileName2',
             dataType: 'xlsx',

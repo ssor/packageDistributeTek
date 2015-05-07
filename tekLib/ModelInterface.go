@@ -223,6 +223,14 @@ type OrderAndExpressmanMap struct {
 	OrderID      string
 	ExpressmanID string
 }
+
+func NewOrderToExpressman(orderID, man string) *OrderAndExpressmanMap {
+	return &OrderAndExpressmanMap{
+		OrderID:      orderID,
+		ExpressmanID: man,
+	}
+}
+
 type OrderAndExpressmanMapList []*OrderAndExpressmanMap
 
 func (this OrderAndExpressmanMapList) Find(orderID string) *OrderAndExpressmanMap {
@@ -232,6 +240,9 @@ func (this OrderAndExpressmanMapList) Find(orderID string) *OrderAndExpressmanMa
 		}
 	}
 	return nil
+}
+func (this OrderAndExpressmanMapList) Add(oem *OrderAndExpressmanMap) OrderAndExpressmanMapList {
+	return append(this, oem)
 }
 
 /*
