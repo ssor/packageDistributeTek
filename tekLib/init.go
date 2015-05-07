@@ -38,7 +38,7 @@ func init() {
 	// if err := InitDB(); err != nil {
 	// 	DebugMust("数据库初始化失败：" + err.Error() + GetFileLocation())
 	// }
-	// initConfig()
+	initConfig()
 	// if tempList, err := GetAllProductsFromDB(); err == nil {
 	// 	Products = tempList
 	// 	DebugInfo("从数据库读取产品信息成功")
@@ -472,13 +472,12 @@ func initConfig() {
 		DebugMust(err.Error() + GetFileLocation())
 	} else {
 
-		// G_OrderPrefix = iniconf.String("orderPrefix")
-		// if len(G_OrderPrefix) > 0 {
-		// 	DebugInfo(fmt.Sprintf("设置订单的前缀为 %s", G_OrderPrefix) + GetFileLocation())
-		// } else {
-		// 	DebugInfo(fmt.Sprintf("订单的前缀为空") + GetFileLocation())
-
-		// }
+		G_OrderPrefix = iniconf.String("orderPrefix")
+		if len(G_OrderPrefix) > 0 {
+			DebugInfo(fmt.Sprintf("设置订单的前缀为 %s", G_OrderPrefix) + GetFileLocation())
+		} else {
+			DebugInfo(fmt.Sprintf("订单的前缀为空") + GetFileLocation())
+		}
 
 		//过滤产品关键字
 		// filterKeywords := iniconf.Strings("filterKeywords")
