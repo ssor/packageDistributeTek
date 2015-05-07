@@ -35,16 +35,16 @@ var (
 
 func init() {
 	// return
-	// if err := InitDB(); err != nil {
-	// 	DebugMust("数据库初始化失败：" + err.Error() + GetFileLocation())
-	// }
+	if err := InitDB(); err != nil {
+		DebugMust("数据库初始化失败：" + err.Error() + GetFileLocation())
+	}
+	if tempList, err := GetAllProductsFromDB(); err == nil {
+		G_Products = tempList
+		DebugInfo(fmt.Sprintf("从数据库读取产品信息成功，共 %d 个", len(G_Products)))
+	} else {
+		DebugMust("读取产品信息失败")
+	}
 	initConfig()
-	// if tempList, err := GetAllProductsFromDB(); err == nil {
-	// 	Products = tempList
-	// 	DebugInfo("从数据库读取产品信息成功")
-	// } else {
-	// 	DebugMust("读取产品信息失败")
-	// }
 	// if tempList, err := GetAllProductNameFromDB(); err == nil {
 	// 	ProductNames = tempList
 	// 	DebugInfo(fmt.Sprintf("读取支持的产品名称信息成功, 共 %d 个", len(ProductNames)))

@@ -24,8 +24,8 @@ func InitDB() error {
 
 //==============================================================================================
 
-func GetAllProductsFromDB() (ProductList, error) {
-	var products ProductList
+func GetAllProductsFromDB() (ProductInfoList, error) {
+	var products ProductInfoList
 	if _, err := g_db.Select(&products, "select * from products"); err != nil {
 		return nil, err
 	} else {
