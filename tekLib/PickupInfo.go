@@ -23,10 +23,10 @@ type PickupInfo struct {
 }
 
 var (
+	其它错误          int = -1
 	成功查找          int = 0
 	没有订单与配送员的绑定信息 int = 1
 	没有订单需要该商品         = 2
-	其它错误          int = 6
 )
 
 func NewPickupInfo(code int, expressmanID, requestID string) *PickupInfo {

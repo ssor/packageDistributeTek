@@ -11,7 +11,7 @@ import (
 	"os"
 	"strconv"
 	"strings"
-	// "time"
+	"time"
 )
 
 const (
@@ -56,20 +56,27 @@ func init() {
 	go initBusiness()
 	// go initCli()
 }
+func GetUncompltedOrdersCount() int {
+	return len(G_orders.Uncompleted())
 
-func initBusiness() {
+}
+func PickUp(id string) *PickupInfo {
+	DebugInfo("开始拣选 ID = " + id + GetFileLocation())
+	chanCallback := make(chan *PickupInfo)
+	request := &PickupRequestInfo{chanCallback: chanCallback, ID: id}
+	G_chanPickup <- request
+	returnTicker := time.After(time.Second * 2)
 	for {
 		select {
-		case request := <-G_chanPickup:
-			DoWithPickupEvents(request)
-			// case request := <-G_chanMergeOrder:
-			// 	DoMergeOrderEvents(request)
+		case info := <-chanCallback:
+			return info
+		case <-returnTicker:
+			return NewPickupErrorInfo(其它错误, id, "操作超时")
 		}
 	}
 }
-
 func DoWithPickupEvents(request *PickupRequestInfo) {
-	info := NewPickupErrorInfo(其它错误, "", "发现不能识别的编码")
+	info := NewPickupErrorInfo(其它错误, request.ID, "发现不能识别的编码")
 	defer func() {
 		request.chanCallback <- info
 	}()
@@ -100,6 +107,16 @@ func DoWithPickupEvents(request *PickupRequestInfo) {
 		}
 	} else {
 		DebugInfo(fmt.Sprintf("发现不能识别的编码 %s", request.ID) + GetFileLocation())
+	}
+}
+func initBusiness() {
+	for {
+		select {
+		case request := <-G_chanPickup:
+			DoWithPickupEvents(request)
+			// case request := <-G_chanMergeOrder:
+			// 	DoMergeOrderEvents(request)
+		}
 	}
 }
 

@@ -81,6 +81,15 @@ func (this OrderList) Need(productName string) *Order {
 	}
 	return nil
 }
+func (this OrderList) Uncompleted() OrderList {
+	list := OrderList{}
+	for _, order := range this {
+		if current, totalNeed := order.GetItemCount(); current == totalNeed {
+			list = append(list, order)
+		}
+	}
+	return list
+}
 
 type OrderItem struct {
 	ProductName             string

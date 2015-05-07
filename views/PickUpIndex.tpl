@@ -60,7 +60,7 @@
       <div class="container" style="margin-top:65px;">
         <div id ="mainInfoWall" class="row" style="background-color: rgba(86,146,51,0.25);box-shadow: 0px 6px 4px rgba(1,1,1,0.4);">
             <div class="col-xs-12 col-sm-12 col-md-12 col-md-lg-12" style="text-align: center;margin-top: 15px;">
-              <div style="text-align: center; color: rgba(0,0,0,0.3); font-size: 14px;">货位号</div>
+              <div style="text-align: center; color: rgba(0,0,0,0.3); font-size: 14px;">配送员</div>
             </div>
             <div class="col-xs-12 col-sm-12 col-md-12 col-md-lg-12" style="text-align: center;">
               <div id="LocationID" style="text-align: center; font-size: 120px;margin-bottom: -10px;margin-top: -30px;">无 </div>
@@ -183,88 +183,25 @@
           $.get("/SubmitPickupID?ID=" + id , function(data) {
                 console.log(data)
                 switch (data.StateCode) {
-                    case 6://其它错误
-                        // $("#output").text(data.Err)
+                    case -1://其它错误
                         setLocationIDAlert()
                         setProductName()
-                        // setAlertInfo(data.Err)
                         ShowAlertMessage(data.Err)
                         break;
-                    case 5://操作超时
+                    case 0://查找成功
+                        setLocationIDNormal(data.ExpressmanID)
+                        setProductName("订单 " + data.RequestID + " 分配给配送员 " + data.ExpressmanID)
+                        // RefreshUncompletedOrdersCount()
+                        break;
+                    case 1://没有订单与配送员的绑定信息
                         setLocationIDAlert()
                         setProductName()
                         setAlertInfo(data.Err)
-                        // $("#output").text(data.Err)
                         break;
-                    case 0://无信息改变
-                        // $("#output").text("信息已经处理")
-                        // setLocationIDAlert()
+                    case 2://没有订单需要该商品
                         setLocationIDAlert()
                         setProductName()
-                        ShowAlertMessage("信息已经处理")
-                        // setNormalInfo("信息已经处理")
-                        break;
-                    case 4://分配到订单失败
-                        // $("#output").text("当前订单中不需要该商品")
-                        setLocationIDAlert()
-                        playSound(err)
-                        setProductName()
-                        ShowAlertMessage("当前订单中不需要该商品")
-                        // PauseInput()
-                        break;
-                    case 3://分配货位失败
-                        playSound(noEmptyLocation)
-                        // setLocationID("0")
-                        if(data.Product != null){
-                          setProductName(data.Product.Name)
-                        }else{
-                          setProductName()
-                        }
-                        setLocationIDAlert()
-                        ShowAlertMessage("分配货位失败，可能已经没有空货位了")
-                        // $("#output").text("分配货位失败，可能已经没有空货位了")
-                        // PauseInput()
-                        break;
-                    case 1://分配货位
-                        playSound(data.Position.ID)
-                        playSound(orderLocated)
-                        setLocationIDNormal(data.Position.ID)
-                        // setLocationID(data.Position.ID)
-                        // setProductNameToDefault()
-                        // setLocationIDNormal()
-                        // setProductName()
-                        setProductName("订单 " + data.OrderID + " 分配到货位 " + data.Position.ID)
-                        RefreshUncompletedOrdersCount()
-                        // $("#output").text("订单 " + data.OrderID + " 分配到货位 " + data.Position.ID)
-                        // PauseInput()
-                        break;
-                    case 2://分配到订单
-                        // playSound(productOK)
-                        playSound(data.Position.ID)
-                        setLocationIDNormal(data.Position.ID)
-                        // setLocationID(data.Position.ID)
-                        if(data.Product != null){
-                          setProductName(data.Product.Name)
-                        }else{
-                          setProductName()
-                        }
-
-                        // setLocationIDNormal()
-                        // $("#output").text("产品 " + data.Product.ID + " 分配到货位 " + data.Position.ID)
-                        // setNormalInfo("产品 " + data.Product.Name + " 分配到货位 " + data.Position.ID)
-                        // PauseInput()
-                        break;
-                    case 7://订单拣选完成
-                        playSound(data.Position.ID)
-                        playSound(orderCompleted)
-                        setLocationIDAlert(data.Position.ID)
-                        // setLocationID(data.Position.ID)
-                        // setLocationIDAlert()
-                        setProductName(data.Product.Name)
-                        RefreshUncompletedOrdersCount()
-                        // setNormalInfo("货位 " + data.Position.ID + " 的订单拣选完成，请取走包装箱")
-                        // $("#output").text("货位 " + data.Position.ID + " 的订单拣选完成，可以取走了")
-                        // PauseInput()
+                        setAlertInfo(data.Err)
                         break;
                 }
             })
@@ -274,15 +211,13 @@
         pauseCount = 0
       }
       $("#progressShow").css("width", (pauseCount * 20) + "%")
-
     }
     function RefreshUncompletedOrdersCount(){
-      $.get("/GetUncompltedPickupOrdersCount", function(data){
+      $.get("/GetUncompltedOrdersCount", function(data){
         if(data == null){
           console.error("系统异常")
         }else{
           console.log(data)
-
           if(data.Code != 0){
             console.warn(data.Message)
             ShowAlertMessage(data.Message)
@@ -315,7 +250,8 @@
         // setInterval(function(){
         //   playSound(productOK)
         // },3000)
-        setInterval(submitOrder, 200)
+        setInterval(submitOrder, 200)//扫描条码的输入框
+        setInterval(RefreshUncompletedOrdersCount, 2000)//单独更新剩余订单
     });
     function ShowAlertMessage(msg){
         $("#blurAlert").text(msg).show()
