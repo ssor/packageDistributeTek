@@ -40,7 +40,7 @@
           <div class="row" id = "subNavBar" style="">
             <div class="col-xs-5 col-sm-5 col-md-5 col-md-lg-5" style="text-align: left;cursor:pointer;"  onclick="window.location.href='/'">
                 <img src="/images/logo_pure.png" class="img-responsive" alt="Responsive image" style="width: 35px; margin-top: 6px;float: left;margin-right: 10px;">
-                <div style="color: rgba(256,256,256,1); padding-top: 10px; font-size: 18px; margin-left: -50px;">订单拣选系统</div>
+                <div style="color: rgba(256,256,256,1); padding-top: 10px; font-size: 18px; margin-left: -50px;">配送站拣选系统</div>
             </div>
             <div class="col-xs-3 col-sm-3 col-md-3 col-md-lg-3" style="text-align: left;">
             </div>
@@ -92,8 +92,8 @@
               <label class="col-sm-2 control-label" style="text-align:left;color: rgba(0,0,0,0.5);">产品目录：</label>
           </div>
         </form>
-        <div style="border-bottom: solid 1px rgba(0,0,0,0.1); margin-bottom: 30px; margin-top: 0px;"></div>
-        <div class="col-xs-12 col-sm-12 col-md-12 col-md-lg-12">
+        <div style="border-bottom: solid 1px rgba(0,0,0,0.1); margin-bottom: 0px; margin-top: 0px;"></div>
+        <div class="col-xs-12 col-sm-12 col-md-12 col-md-lg-12" style="padding-left: 0px; padding-right: 0px;">
           <table id="dtProcess" class="display" cellspacing="0" width="100%" >
               <thead>
                   <tr>
@@ -137,15 +137,15 @@
           "columnDefs": [
                       {
                           "render": function ( data, type, row ) {
-                              return row.CurrentCount + " / " + row.CountNeeded;
+                              return row.CountCurrent + " / " + row.CountNeed;
                           },
                           "targets": 1
                       },
           ],
 
           "columns": [{
-              "data": "ProductID",
-              "width": "80%"
+              "data": "ProductName",
+              "width": "60%"
           }, 
           // {
           //     "data": "CountNeeded",

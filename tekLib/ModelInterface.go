@@ -1,17 +1,17 @@
 package tekLib
 
 import (
-// "bufio"
-// "github.com/astaxie/beego/config"
-// "encoding/json"
-// "errors"
-// "fmt"
-// "github.com/codegangsta/cli"
-// "github.com/tealeg/xlsx"
-// "os"
-// "strconv"
-// "strings"
-// "time"
+	// "bufio"
+	// "github.com/astaxie/beego/config"
+	// "encoding/json"
+	// "errors"
+	"fmt"
+	// "github.com/codegangsta/cli"
+	// "github.com/tealeg/xlsx"
+	// "os"
+	// "strconv"
+	// "strings"
+	// "time"
 )
 
 // type ProductName string
@@ -45,6 +45,15 @@ type Order struct {
 	Items OrderItemList
 }
 
+func NewOrder(id string, items OrderItemList) *Order {
+	if items == nil {
+		items = OrderItemList{}
+	}
+	return &Order{
+		ID:    id,
+		Items: items,
+	}
+}
 func (this *Order) Need(productName string) bool {
 	for _, item := range this.Items {
 		if item.ProductName == productName {
@@ -61,6 +70,21 @@ func (this *Order) GetItemCount() (int, int) {
 		total += item.CountNeed
 	}
 	return current, total
+}
+func (this *Order) Print() {
+	DebugTrace(fmt.Sprintf("订单编号：%s 含有商品种类%d", this.ID, len(this.Items)) + GetFileLocation())
+	this.Items.Print()
+}
+func (this *Order) AddOrderItem(item *OrderItem) {
+	this.Items = this.Items.Add(item)
+}
+func (this *Order) Completed() bool {
+	for _, _item := range this.Items {
+		if _item.Satisfied() == false {
+			return false
+		}
+	}
+	return true
 }
 
 type OrderList []*Order
@@ -90,17 +114,94 @@ func (this OrderList) Uncompleted() OrderList {
 	}
 	return list
 }
+func (this OrderList) Remove(id string) OrderList {
+	for i, _order := range this {
+		if _order.ID == id {
+			return append(this[0:i], this[i+1:]...)
+		}
+	}
+	return this
+}
+func (this OrderList) Add(orders ...*Order) OrderList {
+	tempList := this
+	for _, order := range orders {
+		if tempList.Find(order.ID) == nil {
+			tempList = append(tempList, order)
+		}
+	}
+	return tempList
+}
+
+//之前存在的订单不会重复添加
+func (this OrderList) AddRange(orders OrderList) OrderList {
+	tempList := this
+	for _, order := range orders {
+		if tempList.Find(order.ID) == nil {
+			tempList = append(tempList, order)
+		}
+	}
+	return tempList
+}
+func (this OrderList) Print() {
+	DebugTrace(G_DebugLine)
+	for _, order := range this {
+		order.Print()
+	}
+	DebugTrace(G_DebugLine)
+}
 
 type OrderItem struct {
-	ProductName             string
+	ProductName, OrderID    string
 	CountNeed, CountCurrent int
 }
 
+func NewOrderItem(productID string, count int, orderID string) *OrderItem {
+	return &OrderItem{
+		ProductName:  productID,
+		CountNeed:    count,
+		CountCurrent: 0,
+		OrderID:      orderID,
+	}
+}
+func (this *OrderItem) Satisfied() bool {
+	return this.CountNeed == this.CountCurrent
+}
+func (this *OrderItem) Print() {
+	DebugTrace(fmt.Sprintf("		商品名称：%s  需求量：%d", this.ProductName, this.CountNeed) + GetFileLocation())
+}
 func (this *OrderItem) PlusOne() {
-	this.CountCurrent += 1
+	// this.CountCurrent += 1
+	this.PlusOrderedItem(1)
+}
+
+//将同类的需求数目合并
+func (this *OrderItem) PlusOrderedItem(count int) {
+	this.CountNeed = this.CountNeed + count
 }
 
 type OrderItemList []*OrderItem
+
+func (this OrderItemList) Print() {
+	for _, item := range this {
+		item.Print()
+	}
+}
+func (this OrderItemList) Find(productID, orderID string) *OrderItem {
+	for _, _item := range this {
+		if _item.ProductName == productID && _item.OrderID == orderID {
+			return _item
+		}
+	}
+	return nil
+}
+func (this OrderItemList) Add(item *OrderItem) OrderItemList {
+	if _item := this.Find(item.ProductName, item.OrderID); _item != nil {
+		_item.PlusOrderedItem(item.CountNeed)
+	} else {
+		return append(this, NewOrderItem(item.ProductName, item.CountNeed, item.OrderID))
+	}
+	return this
+}
 
 //商品信息：名称和条码
 type ProductInfo struct {

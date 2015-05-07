@@ -23,6 +23,12 @@ func init() {
 	// 订单
 	beego.Router("/OrderListIndex", &controllers.MainController{}, "get:OrderListIndex")
 	beego.Router("/OrderInfoList", &controllers.MainController{}, "get:OrderInfoList")
+	beego.Router("/AddOrderIndex", &controllers.MainController{}, "get:AddOrderIndex")
+	beego.Router("/RemoveOrder", &controllers.MainController{}, "get:RemoveOrder")
+	beego.Router("/UploadOrderInfo", &controllers.MainController{}, "post:UploadOrderInfo")
+	beego.Router("/OrderDetailIndex", &controllers.MainController{}, "get:OrderDetailIndex")
+	beego.Router("/OrderDetail", &controllers.MainController{}, "get:OrderDetail")
+	beego.Router("/ClearCompletedOrders", &controllers.MainController{}, "get:ClearCompletedOrders")
 
 	// 订单分配信息
 	beego.Router("/OrderToExpressmanManagementIndex", &controllers.MainController{}, "get:OrderToExpressmanManagementIndex")

@@ -46,18 +46,24 @@ var userBeego = false
 var useColor = true
 
 var G_printLog = true
+var G_DebugLine = "-------------------------------------------------------------------------------------------------"
 
-// var userBeego = true
-
+//能够造成系统不正常运行的问题
 func DebugMust(log string) {
 	DebugOutput(log, 1)
 }
+
+// 出现异常信息，系统能够正常运行，但是可能和使用者想象的不同
 func DebugSys(log string) {
 	DebugOutput(log, 2)
 }
+
+// 关键步骤或者信息的提醒
 func DebugInfo(log string) {
 	DebugOutput(log, 3)
 }
+
+// 运行数据的打印
 func DebugTrace(log string) {
 	DebugOutput(log, 4)
 }
