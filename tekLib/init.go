@@ -22,13 +22,14 @@ const (
 var (
 	// G_shelfCount    int                     = DEFAULT_SHELF_COUNT //拣选墙数目
 	// G_locationCount int                     = DEFAULT_LOCATION_COUNT        //每个拣选墙的货位数
-	G_OrderAndExpressmanMaps OrderAndExpressmanMapList = OrderAndExpressmanMapList{}
-	G_Products               ProductInfoList           = ProductInfoList{}
-	G_chanPickup             chan *PickupRequestInfo   = make(chan *PickupRequestInfo) //拣选的请求信息
-	iniconf                  config.ConfigContainer    = nil
-	cliApp                   *cli.App                  = nil //交互线程
-	G_orders                 OrderList                 = OrderList{}
-	G_OrderPrefix            string                    = "" //订单的前缀，有的订单以 800 开始
+	G_OrderAndExpressmanMaps        OrderAndExpressmanMapList = OrderAndExpressmanMapList{}
+	G_OrderAndExpressmanMapsCurrent OrderAndExpressmanMapList = OrderAndExpressmanMapList{} //已经分配完成分配的记录
+	G_Products                      ProductInfoList           = ProductInfoList{}
+	G_chanPickup                    chan *PickupRequestInfo   = make(chan *PickupRequestInfo) //拣选的请求信息
+	iniconf                         config.ConfigContainer    = nil
+	cliApp                          *cli.App                  = nil //交互线程
+	G_orders                        OrderList                 = OrderList{}
+	G_OrderPrefix                   string                    = "" //订单的前缀，有的订单以 800 开始
 	// ProductNames    ProductNameList         = ProductNameList{} //数据库中支持的商品名称
 	// ProductNameFilterKewwords []string                = []string{}
 )
@@ -128,11 +129,15 @@ func UploadOrderToExpressmanInfo(sheet *xlsx.Sheet) error {
 
 		_orderID := strings.Trim(row.Cells[0].Value, " ") //流水号
 		_expressman := strings.Trim(row.Cells[3].Value, " ")
-
+		if len(_orderID) <= 0 && len(_expressman) <= 0 {
+			continue
+		}
 		DebugTrace(fmt.Sprintf("%d: %s -> %s", i+1, _orderID, _expressman) + GetFileLocation())
 		_orderID = G_OrderPrefix + _orderID //易果系统会自动添加 前缀 作为识别码
 		if len(_expressman) <= 0 {
-			DebugSys(fmt.Sprintf("订单 %s 没有指定配送员", _orderID) + GetFileLocation())
+			if len(_orderID) > 0 {
+				DebugSys(fmt.Sprintf("订单 %s 没有指定配送员", _orderID) + GetFileLocation())
+			}
 			continue
 		}
 		G_OrderAndExpressmanMaps = G_OrderAndExpressmanMaps.Add(NewOrderToExpressman(_orderID, _expressman))
@@ -239,11 +244,12 @@ func extractOrderInfoFromDistributionDetail(sheet *xlsx.Sheet) (OrderList, error
 		if len(_content) <= 0 {
 			continue
 		}
-		items, _ := splitOrderItems(_content, _orderID)
+		items := splitOrderItems(_content, _orderID)
 		// itemsFilted = itemsFilted.AddRange(_itemsFilted)
 		if len(items) <= 0 {
+			DebugInfo(fmt.Sprintf("订单 %s 没有大货", _orderID) + GetFileLocation())
 			// DebugSys("订单里没有订购信息，出现解析异常，原数据：" + _orderID + "  " + _content + GetFileLocation())
-			continue
+			// continue
 		}
 		if orderTemp := ordersTemp.Find(_orderID); orderTemp == nil {
 			ordersTemp = ordersTemp.Add(NewOrder(_orderID, items))
@@ -258,11 +264,14 @@ func extractOrderInfoFromDistributionDetail(sheet *xlsx.Sheet) (OrderList, error
 }
 
 //将配送单里面的内容拆分成订单
-func splitOrderItems(content, orderID string) (OrderItemList, OrderItemList) {
-	orderItemsFilted := OrderItemList{}
+func splitOrderItems(content, orderID string) OrderItemList {
+	// orderItemsFilted := OrderItemList{}
 	list := OrderItemList{}
 	if strings.Contains(content, "自由拼：") == true {
 		content = strings.Replace(content, "自由拼：", "", -1)
+		if len(strings.Trim(content, " ")) <= 0 {
+			return list
+		}
 		content = strings.Replace(content, "，", ",", -1)
 		content = strings.Replace(content, "：", ":", -1)
 		nameWithCountList := strings.Split(content, ",")
@@ -301,7 +310,7 @@ func splitOrderItems(content, orderID string) (OrderItemList, OrderItemList) {
 
 		}
 	}
-	return list, orderItemsFilted
+	return list
 }
 
 //从订单中提取订单
@@ -410,8 +419,8 @@ func RemoveOrder(orderID string) error {
 }
 
 func GetUncompltedOrdersCount() int {
-	return len(G_orders.Uncompleted())
-
+	// return len(G_orders.Uncompleted())
+	return len(NewOrderInfoList(G_orders, G_OrderAndExpressmanMapsCurrent).UncompletedList())
 }
 func PickUp(id string) *PickupInfo {
 	DebugInfo("开始拣选 ID = " + id + GetFileLocation())
@@ -438,12 +447,15 @@ func DoWithPickupEvents(request *PickupRequestInfo) {
 	//如果是商品的唯一码，则要根据唯一码查找到商品名称，再将商品名称对应到订单上，最后查找到对应的快递员ID
 
 	if orderTemp := G_orders.Find(request.ID); orderTemp != nil { //这是一个订单编号，直接查找配送员
+		DebugTrace(fmt.Sprintf("接收到订单 %s ", request.ID) + GetFileLocation())
 		oem := G_OrderAndExpressmanMaps.Find(request.ID)
 		if oem == nil {
 			info = NewPickupErrorInfo(没有订单与配送员的绑定信息, request.ID, fmt.Sprintf("订单【%s】没有指定配送员", request.ID))
 			return
 		}
 		info = NewPickupInfo(成功查找, oem.ExpressmanID, request.ID)
+		DebugTrace(fmt.Sprintf("订单 %s 分配给配送员 %s", request.ID, oem.ExpressmanID) + GetFileLocation())
+		G_OrderAndExpressmanMapsCurrent = G_OrderAndExpressmanMapsCurrent.Add(NewOrderToExpressman(request.ID, oem.ExpressmanID))
 		return
 	} else if product := G_Products.Find(request.ID); product != nil { //这是一个产品单号，需要在分配货位的订单中查找需要的订单
 		DebugTrace(fmt.Sprintf("接收到产品编码 %s 名称 %s", request.ID, product.Name) + GetFileLocation())

@@ -106,7 +106,7 @@
                         <tr>
                             <th></th>
                             <th>订单编码</th>
-                            <th>配送员</th>
+                            <th>预定配送员</th>
                             <!-- <th>完成状态</th> -->
                         </tr>
                     </thead>
@@ -114,13 +114,13 @@
               </div>
           </div>
       </div>
-      <nav class="navbar navbar-default navbar-fixed-bottom">
+<!--       <nav class="navbar navbar-default navbar-fixed-bottom">
         <div class="container">
               <div class="col-xs-12 col-sm-12 col-md-12 col-md-lg-12">
                 <div id="blurAlert" class="alert alert-danger" role="alert" style="text-align: center;"></div>
               </div>
         </div>
-      </nav>          
+      </nav>     -->      
     <script>
       var table;
       var orderIDToSearch = ""

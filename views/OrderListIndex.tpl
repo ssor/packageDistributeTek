@@ -83,8 +83,8 @@
                             <th></th>
                             <th>订单编码</th>
                             <th>是否完成</th>
-                            <th>完成度</th>
-                            <th>配送员</th>
+                            <th>大货完成度</th>
+                            <th>当前配送员</th>
                         </tr>
                     </thead>
                 </table>
@@ -104,7 +104,7 @@
                       } ,
                       {
                           "render": function ( data, type, row ) {//完成与否
-                              if(row.CurrentItemCount == row.TotalItemCount){
+                              if(row.CurrentItemCount == row.TotalItemCount && row.ExpressmanID.length > 0 && row.ExpressmanID != "未分配"){
                                 return "是"
                               }else{
                                 return "否"
@@ -136,7 +136,7 @@
                 "width": "5%"
               },{
                   "data": "ID",
-                  "width": "30%"
+                  "width": "25%"
               }, 
               {
                   // "data": "Completed",
@@ -144,7 +144,7 @@
               }, 
               {
                   // "data": "Located",
-                  "width": "20%"
+                  "width": "25%"
               }, {
                   "data": "ExpressmanID",
                   "width": "30%"

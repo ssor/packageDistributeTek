@@ -44,6 +44,15 @@ func NewOrderInfoList(orderList OrderList, order2ExpressmanList OrderAndExpressm
 	}
 	return list
 }
+func (this OrderInfoList) UncompletedList() OrderInfoList {
+	list := OrderInfoList{}
+	for _, oi := range this {
+		if oi.CurrentItemCount < oi.TotalItemCount || oi.ExpressmanID == "未分配" {
+			list = append(list, oi)
+		}
+	}
+	return list
+}
 
 //订单结构
 type Order struct {
@@ -86,7 +95,9 @@ func (this *Order) AddOneToCurrent(productName string) bool {
 // }
 func (this *Order) Need(productName string) bool {
 	if item := this.Items.Find(productName, this.ID); item != nil {
-		return true
+		if item.CountCurrent < item.CountNeed {
+			return true
+		}
 	}
 	// for _, item := range this.Items {
 	// 	if item.ProductName == productName {
@@ -200,7 +211,7 @@ func (this *OrderItem) Satisfied() bool {
 	return this.CountNeed == this.CountCurrent
 }
 func (this *OrderItem) Print() {
-	DebugTrace(fmt.Sprintf("		商品名称：%s  需求量：%d", this.ProductName, this.CountNeed) + GetFileLocation())
+	DebugTrace(fmt.Sprintf("		商品名称：%s  拣选进度：%d / %d ", this.ProductName, this.CountCurrent, this.CountNeed) + GetFileLocation())
 }
 func (this *OrderItem) AddOneToCurrent() {
 	this.CountCurrent += 1

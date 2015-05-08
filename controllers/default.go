@@ -87,7 +87,7 @@ func (this *MainController) OrderListIndex() {
 
 // 订单信息列表
 func (this *MainController) OrderInfoList() {
-	this.Data["json"] = tekLib.NewOrderInfoList(tekLib.G_orders, tekLib.G_OrderAndExpressmanMaps)
+	this.Data["json"] = tekLib.NewOrderInfoList(tekLib.G_orders, tekLib.G_OrderAndExpressmanMapsCurrent)
 	this.ServeJson()
 }
 
