@@ -19,6 +19,7 @@ func init() {
 	beego.Router("/PickUpIndex", &controllers.MainController{}, "get:PickUpIndex")
 	beego.Router("/SubmitPickupID", &controllers.MainController{}, "get:SubmitPickupID")
 	beego.Router("/GetUncompltedOrdersCount", &controllers.MainController{}, "get:GetUncompltedOrdersCount")
+	// beego.Router("/PickingupOrdersDetailIndex", &controllers.MainController{}, "get:PickingupOrdersDetailIndex")
 
 	// 订单
 	beego.Router("/OrderListIndex", &controllers.MainController{}, "get:OrderListIndex")

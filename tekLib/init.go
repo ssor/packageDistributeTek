@@ -15,8 +15,8 @@ import (
 )
 
 const (
-	DEFAULT_LOCATION_COUNT = 8
-	DEFAULT_SHELF_COUNT    = 4
+// DEFAULT_LOCATION_COUNT = 8
+// DEFAULT_SHELF_COUNT    = 4
 )
 
 var (
@@ -42,7 +42,7 @@ func init() {
 		G_Products = tempList
 		DebugInfo(fmt.Sprintf("从数据库读取产品信息成功，共 %d 个", len(G_Products)))
 	} else {
-		DebugMust("读取产品信息失败")
+		DebugMust("读取产品信息失败" + GetFileLocation())
 	}
 	initConfig()
 	// if tempList, err := GetAllProductNameFromDB(); err == nil {

@@ -84,6 +84,7 @@
                             <th>订单编码</th>
                             <th>是否完成</th>
                             <th>完成度</th>
+                            <th>配送员</th>
                         </tr>
                     </thead>
                 </table>
@@ -135,15 +136,18 @@
                 "width": "5%"
               },{
                   "data": "ID",
-                  "width": "35%"
+                  "width": "30%"
               }, 
               {
                   // "data": "Completed",
-                  "width": "20%"
+                  "width": "15%"
               }, 
               {
                   // "data": "Located",
                   "width": "20%"
+              }, {
+                  "data": "ExpressmanID",
+                  "width": "30%"
               }, 
               ]
           });

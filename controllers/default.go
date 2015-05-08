@@ -87,7 +87,7 @@ func (this *MainController) OrderListIndex() {
 
 // 订单信息列表
 func (this *MainController) OrderInfoList() {
-	this.Data["json"] = tekLib.NewOrderInfoList(tekLib.G_orders)
+	this.Data["json"] = tekLib.NewOrderInfoList(tekLib.G_orders, tekLib.G_OrderAndExpressmanMaps)
 	this.ServeJson()
 }
 
@@ -252,3 +252,8 @@ func (this *MainController) OrderDetail() {
 		orderTemp = orderFinded
 	}
 }
+
+// //拣选剩余
+// func (this *MainController) PickingupOrdersDetailIndex() {
+// 	this.TplNames = "PickingupOrdersDetailIndex.tpl"
+// }

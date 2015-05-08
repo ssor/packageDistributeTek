@@ -16,25 +16,31 @@ import (
 
 // type ProductName string
 type OrderInfo struct {
-	ID                               string
+	ID, ExpressmanID                 string
 	CurrentItemCount, TotalItemCount int
 }
 
-func NewOrderInfo(order *Order) *OrderInfo {
+func NewOrderInfo(order *Order, expressmanID string) *OrderInfo {
 	current, total := order.GetItemCount()
 	return &OrderInfo{
 		ID:               order.ID,
 		CurrentItemCount: current,
 		TotalItemCount:   total,
+		ExpressmanID:     expressmanID,
 	}
 }
 
 type OrderInfoList []*OrderInfo
 
-func NewOrderInfoList(orderList OrderList) OrderInfoList {
+func NewOrderInfoList(orderList OrderList, order2ExpressmanList OrderAndExpressmanMapList) OrderInfoList {
 	list := OrderInfoList{}
 	for _, order := range orderList {
-		list = append(list, NewOrderInfo(order))
+		if oem := order2ExpressmanList.Find(order.ID); oem == nil {
+			list = append(list, NewOrderInfo(order, "未分配"))
+		} else {
+			list = append(list, NewOrderInfo(order, oem.ExpressmanID))
+		}
+
 	}
 	return list
 }

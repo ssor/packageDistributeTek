@@ -273,7 +273,7 @@
       $("#inputID")[0].focus()        
     }    
     function ToUncompltedDetail(){
-      window.location.href = "/PickingupOrdersDetailIndex"
+      window.location.href = "/OrderListIndex"
     }
 
     </script>
