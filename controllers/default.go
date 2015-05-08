@@ -216,7 +216,7 @@ func (this *MainController) UploadInfoFromFile() {
 			cmd = newCommand(1, "上传文件出错")
 			return
 		} else {
-			if err := tekLib.UploadFromFile(fileName, fileType); err != nil {
+			if err := tekLib.UploadFromFile("temp/"+fileName, fileType); err != nil {
 				tekLib.DebugSys(err.Error() + tekLib.GetFileLocation())
 				cmd = newCommand(1, err.Error())
 				return

@@ -126,16 +126,16 @@
           
           $('#dtProcess tbody').on( 'click', 'tr', function () {
               //只能选中单行
-              // if ( $(this).hasClass('selected') ) {
-              //     $(this).removeClass('selected');
-              // }
-              // else {
-              //     table.$('tr.selected').removeClass('selected');
-              //     $(this).addClass('selected');
-              // }
+              if ( $(this).hasClass('selected') ) {
+                  $(this).removeClass('selected');
+              }
+              else {
+                  table.$('tr.selected').removeClass('selected');
+                  $(this).addClass('selected');
+              }
 
               //可以选中多行
-              $(this).toggleClass('selected');
+              // $(this).toggleClass('selected');
           } );
       });
       

@@ -55,6 +55,10 @@ func init() {
 	// Positions = NewPositionList(G_locationCount)
 	go initBusiness()
 	// go initCli()
+
+	//测试时使用，从文件导入数据
+	// UploadFromFile("static/files/订单分配到人列表模板.xlsx", "3")
+	// UploadFromFile("static/files/配送单模板.xlsx", "1")
 }
 func ClearCompletedOrders() error {
 	list := OrderList{}
@@ -66,6 +70,34 @@ func ClearCompletedOrders() error {
 	G_orders = list
 	return nil
 }
+
+// 从文件导入数据
+func UploadFromFile(excelFileName string, fileType string) error {
+	// excelFileName = "temp/" + excelFileName
+	var err error
+	var xlFile *xlsx.File
+	if xlFile, err = xlsx.OpenFile(excelFileName); err != nil {
+		DebugMust(err.Error())
+		return err
+	}
+	//检查格式
+	// fmt.Println(fmt.Sprintf("文件中共有 %d 个 sheet", len(xlFile.Sheets)))
+
+	if len(xlFile.Sheets) <= 0 {
+		return errors.New("文件中没有数据")
+	}
+	// var ordersTemp OrderList
+	firstSheet := xlFile.Sheets[0]
+	switch fileType {
+	case "1", "2":
+		return UploadOrderInfoFromFile(firstSheet, fileType)
+	case "3":
+		return UploadOrderToExpressmanInfo(firstSheet)
+	}
+	return nil
+}
+
+// 导入订单分配到配送员信息
 func UploadOrderToExpressmanInfo(sheet *xlsx.Sheet) error {
 	rows := sheet.Rows
 
@@ -109,30 +141,6 @@ func UploadOrderToExpressmanInfo(sheet *xlsx.Sheet) error {
 	DebugTrace(G_DebugLine)
 
 	DebugInfo(fmt.Sprintf("共导入了 %d 个分配信息", count))
-	return nil
-}
-func UploadFromFile(excelFileName string, fileType string) error {
-	excelFileName = "temp/" + excelFileName
-	var err error
-	var xlFile *xlsx.File
-	if xlFile, err = xlsx.OpenFile(excelFileName); err != nil {
-		DebugMust(err.Error())
-		return err
-	}
-	//检查格式
-	// fmt.Println(fmt.Sprintf("文件中共有 %d 个 sheet", len(xlFile.Sheets)))
-
-	if len(xlFile.Sheets) <= 0 {
-		return errors.New("文件中没有数据")
-	}
-	// var ordersTemp OrderList
-	firstSheet := xlFile.Sheets[0]
-	switch fileType {
-	case "1", "2":
-		return UploadOrderInfoFromFile(firstSheet, fileType)
-	case "3":
-		return UploadOrderToExpressmanInfo(firstSheet)
-	}
 	return nil
 }
 
@@ -432,7 +440,7 @@ func DoWithPickupEvents(request *PickupRequestInfo) {
 	if orderTemp := G_orders.Find(request.ID); orderTemp != nil { //这是一个订单编号，直接查找配送员
 		oem := G_OrderAndExpressmanMaps.Find(request.ID)
 		if oem == nil {
-			info = NewPickupErrorInfo(没有订单与配送员的绑定信息, request.ID, "订单没有指定配送员")
+			info = NewPickupErrorInfo(没有订单与配送员的绑定信息, request.ID, fmt.Sprintf("订单【%s】没有指定配送员", request.ID))
 			return
 		}
 		info = NewPickupInfo(成功查找, oem.ExpressmanID, request.ID)
@@ -440,15 +448,24 @@ func DoWithPickupEvents(request *PickupRequestInfo) {
 	} else if product := G_Products.Find(request.ID); product != nil { //这是一个产品单号，需要在分配货位的订单中查找需要的订单
 		DebugTrace(fmt.Sprintf("接收到产品编码 %s 名称 %s", request.ID, product.Name) + GetFileLocation())
 		if orderTemp := G_orders.Need(product.Name); orderTemp == nil { //没有订单里需要该商品
-			info = NewPickupErrorInfo(没有订单需要该商品, request.ID, "没有订单需要商品"+product.Name)
+			info = NewPickupErrorInfo(没有订单需要该商品, request.ID, fmt.Sprintf("没有订单中含有商品【%s】", product.Name))
 			return
 		} else { //查找到订单了，然后根据订单查找到人就可以了
 			oem := G_OrderAndExpressmanMaps.Find(orderTemp.ID)
 			if oem == nil {
-				info = NewPickupErrorInfo(没有订单与配送员的绑定信息, request.ID, fmt.Sprintf("商品 %s 在订单%s中，但没有指定配送员", product.Name, orderTemp.ID))
+				info = NewPickupErrorInfo(没有订单与配送员的绑定信息, request.ID, fmt.Sprintf("商品【%s】在订单【%s】中，但没有指定配送员", product.Name, orderTemp.ID))
 				return
 			}
-			info = NewPickupInfo(成功查找, oem.ExpressmanID, request.ID)
+			orderTemp.AddOneToCurrent(product.Name)
+			info = NewPickupInfo(成功查找, oem.ExpressmanID, product.Name)
+			if orderTemp.Completed() == true {
+				DebugInfo(fmt.Sprintf("订单【%s】完成拣选", orderTemp.ID) + GetFileLocation())
+			} else {
+				DebugInfo(fmt.Sprintf("订单【%s】尚未完成拣选", orderTemp.ID) + GetFileLocation())
+				DebugTrace(G_DebugLine)
+				orderTemp.Print()
+				DebugTrace(G_DebugLine)
+			}
 		}
 	} else {
 		DebugInfo(fmt.Sprintf("发现不能识别的编码 %s", request.ID) + GetFileLocation())

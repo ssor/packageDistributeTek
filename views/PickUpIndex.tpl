@@ -168,14 +168,14 @@
         }
         $("#ProductName").text(value)
     }
-    function setAlertInfo(value){
-      $("#output").css("color", "rgb(210,0,0)")
-      $("#output").text(value)
-    }
-    function setNormalInfo(value){
-        $("#output").css("color", "black")
-        $("#output").text(value)
-    }
+    // function setAlertInfo(value){
+    //   $("#output").css("color", "rgb(210,0,0)")
+    //   $("#output").text(value)
+    // }
+    // function setNormalInfo(value){
+    //     $("#output").css("color", "black")
+    //     $("#output").text(value)
+    // }
     function request(id){
           if(id.length <= 0) return
           HideAlertMessage()
@@ -190,18 +190,19 @@
                         break;
                     case 0://查找成功
                         setLocationIDNormal(data.ExpressmanID)
-                        setProductName("订单 " + data.RequestID + " 分配给配送员 " + data.ExpressmanID)
+                        setProductName("【" + data.RequestID + "】分配给配送员【" + data.ExpressmanID+"】")
                         // RefreshUncompletedOrdersCount()
+                        HideAlertMessage()
                         break;
                     case 1://没有订单与配送员的绑定信息
                         setLocationIDAlert()
                         setProductName()
-                        setAlertInfo(data.Err)
+                        ShowAlertMessage(data.Err)
                         break;
                     case 2://没有订单需要该商品
                         setLocationIDAlert()
                         setProductName()
-                        setAlertInfo(data.Err)
+                        ShowAlertMessage(data.Err)
                         break;
                 }
             })
@@ -217,7 +218,7 @@
         if(data == null){
           console.error("系统异常")
         }else{
-          console.log(data)
+          // console.log(data)
           if(data.Code != 0){
             console.warn(data.Message)
             ShowAlertMessage(data.Message)

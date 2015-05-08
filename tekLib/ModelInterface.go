@@ -54,13 +54,40 @@ func NewOrder(id string, items OrderItemList) *Order {
 		Items: items,
 	}
 }
-func (this *Order) Need(productName string) bool {
-	for _, item := range this.Items {
-		if item.ProductName == productName {
-			item.PlusOne()
-			return true
-		}
+
+//订单已拣选商品量加1
+func (this *Order) AddOneToCurrent(productName string) bool {
+	if item := this.Items.Find(productName, this.ID); item != nil {
+		item.AddOneToCurrent()
+		return true
 	}
+	return false
+}
+
+//订单合并需求
+// func (this *Order) PlusOne(productName string) bool {
+// 	if item := this.Items.Find(productName, this.ID); item != nil {
+// 		item.PlusOne()
+// 		return true
+// 	}
+// 	// for _, item := range this.Items {
+// 	// 	if item.ProductName == productName {
+// 	// 		item.PlusOne()
+// 	// 		return true
+// 	// 	}
+// 	// }
+// 	return false
+// }
+func (this *Order) Need(productName string) bool {
+	if item := this.Items.Find(productName, this.ID); item != nil {
+		return true
+	}
+	// for _, item := range this.Items {
+	// 	if item.ProductName == productName {
+	// 		// item.PlusOne()
+	// 		return true
+	// 	}
+	// }
 	return false
 }
 func (this *Order) GetItemCount() (int, int) {
@@ -108,7 +135,7 @@ func (this OrderList) Need(productName string) *Order {
 func (this OrderList) Uncompleted() OrderList {
 	list := OrderList{}
 	for _, order := range this {
-		if current, totalNeed := order.GetItemCount(); current == totalNeed {
+		if current, totalNeed := order.GetItemCount(); current != totalNeed {
 			list = append(list, order)
 		}
 	}
@@ -169,15 +196,20 @@ func (this *OrderItem) Satisfied() bool {
 func (this *OrderItem) Print() {
 	DebugTrace(fmt.Sprintf("		商品名称：%s  需求量：%d", this.ProductName, this.CountNeed) + GetFileLocation())
 }
-func (this *OrderItem) PlusOne() {
-	// this.CountCurrent += 1
-	this.PlusOrderedItem(1)
+func (this *OrderItem) AddOneToCurrent() {
+	this.CountCurrent += 1
+	// this.PlusOrderedItem(1)
 }
 
+// func (this *OrderItem) PlusOne() {
+// 	// this.CountCurrent += 1
+// 	this.PlusOrderedItem(1)
+// }
+
 //将同类的需求数目合并
-func (this *OrderItem) PlusOrderedItem(count int) {
-	this.CountNeed = this.CountNeed + count
-}
+// func (this *OrderItem) PlusOrderedItem(count int) {
+// 	this.CountNeed = this.CountNeed + count
+// }
 
 type OrderItemList []*OrderItem
 
@@ -195,9 +227,8 @@ func (this OrderItemList) Find(productID, orderID string) *OrderItem {
 	return nil
 }
 func (this OrderItemList) Add(item *OrderItem) OrderItemList {
-	if _item := this.Find(item.ProductName, item.OrderID); _item != nil {
-		_item.PlusOrderedItem(item.CountNeed)
-	} else {
+	if _item := this.Find(item.ProductName, item.OrderID); _item == nil {
+		// _item.PlusOrderedItem(item.CountNeed)
 		return append(this, NewOrderItem(item.ProductName, item.CountNeed, item.OrderID))
 	}
 	return this
